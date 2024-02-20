@@ -2,7 +2,7 @@ const API_KEY = ``
 let news = []
 
 const getLatesNews = async() => {
-    const url = new URL(`http://times-node-env.eba-appvq3ef.ap-northeast-2.elasticbeanstalk.com/top-headlines`
+    const url = new URL(`https://kimsnewstimes.netlify.app/top-headlines`
     );// &apiKey=${API_KEY}
 
 console.log("uuu", url)
