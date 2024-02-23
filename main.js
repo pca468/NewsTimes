@@ -1,7 +1,29 @@
 const API_KEY = ``
 let newsList = [];
 const menus = document.querySelectorAll(".menus button")
-menus.forEach(menu => menu.addEventListener("click", (event) => getNewsCategory(event)))
+menus.forEach(menu => 
+    menu.addEventListener("click", (event) => getNewsCategory(event))
+    );
+
+const getNews = async() => {
+    try {
+        const response = await fetch(url); // await => 이 함수를 일시정지 해줄래? 그 다음 call stack이 없을 때 다시 실행
+        const data = await response.json(); // json은 객체를 텍스트화 시킨것
+        if(response.status === 200) {
+            if(data.articles.length === 0){
+                throw new Error("No result for this search");
+            }
+            newsList = data.articles;
+            render();
+        } else {
+            throw new Error(data.message)
+        }
+    } catch (error) {
+        errorRender(error.message);
+    }
+};
+
+let url = new URL(`https://kimsnewstimes.netlify.app/top-headlines`)
 
 const openNav = () => {
     document.getElementById("mySidenav").style.width = "250px";
@@ -20,46 +42,32 @@ const openSearchBox = () => {
 };
 
 const getLatesNews = async() => {
-    const url = new URL(`https://kimsnewstimes.netlify.app/top-headlines`
-    );// &apiKey=${API_KEY}
+    url = new URL(
+        `https://kimsnewstimes.netlify.app/top-headlines`
+     );// &apiKey=${API_KEY}
 
-console.log("uuu", url)
-
-const response = await fetch(url); // await => 이 함수를 일시정지 해줄래? 그 다음 call stack이 없을 때 다시 실행
-const data = await response.json() // json은 객체를 텍스트화 시킨것
-newsList = data.articles
-render();
-
-console.log("rrr", response) // pending 아직 결과가 안나왔다. 기다려줘...!
-console.log("dddd", newsList)
+    getNews();
+    console.log("rrr", response) // pending 아직 결과가 안나왔다. 기다려줘...!
 };
 
 const getNewsCategory = async (event) => {
     const category = event.target.textContent.toLowerCase();
     console.log("category",category)
-    const url = new URL(`https://kimsnewstimes.netlify.app/top-headlines?category=${category}`
+    url = new URL(
+        `https://kimsnewstimes.netlify.app/top-headlines?category=${category}`
     );
 
-    const response= await fetch(url)
-    const data = await response.json()
-    console.group("Ddd" , data);
-
-    newsList = data.articles
-    render()
+    getNews();
 };
 
 const getNewsByKeyword = async () => {
     const keyword = document.getElementById("search-input").value;
     console.log("www", keyword)
-    const url = new URL(`https://kimsnewstimes.netlify.app/top-headlines?q=${keyword}`
+    url = new URL(
+        `https://kimsnewstimes.netlify.app/top-headlines?q=${keyword}`
     );
 
-    const response = await fetch(url)
-    const data = await response.json()
-    console.log(data)
-
-    newsList = data.articles
-    render()
+    getNews();
 }
 
 const render = () => {
@@ -95,6 +103,16 @@ const render = () => {
 
     document.getElementById('news-board').innerHTML=newsHTML
 }
+
+const errorRender = (errorMessage) => {
+    const errotHTML = `
+    <div class="alert alert-danger" role="alert">
+       ${errorMessage}
+    </div>
+    `;
+    document.getElementById("news-board").innerHTML = errotHTML;
+}
+
 render();
 getLatesNews();
 
