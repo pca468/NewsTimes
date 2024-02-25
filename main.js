@@ -144,11 +144,34 @@ const paginationRender = () => {
     const firstPage = 
         lastPage - (groupSize - 1) <= 0 ? 1 : lastPage - (groupSize - 1);
 
-    let paginationHTML = ``;
+    let paginationHTML = ` 
+    <li class="page-item" onclick="pageClick(1)">
+        <a class="page-link" href='#js-bottom'>&lt;&lt;</a>
+    </li>
+    <li class="page-item" onclick = "moveToPage(${page - 1})"> 
+        <a class="page-link" href='#js-bottom'>&lt;</a>
+        </li>;
+    `;
 
     for(let i = firstPage; i <= lastPage; i++){
         paginationHTML += `<li class="page-item ${i === page ? "active" : ""}" onclick = "moveToPage(${i})"><a class="page-link">${i}</a></li>`
     }
+
+
+    let last = pageGroup * 5;
+    if (last > totalResults) {
+      // 마지막 그룹이 5개 이하이면
+      last = totalResults;
+    }
+  let first = last - 4 <= 0 ? 1 : last - 4; // 첫그룹이 5이하이면
+
+    paginationHTML += `
+    <li class="page-item" onclick="pageClick(${page + 1})">
+        <a  class="page-link" href='#js-program-detail-bottom'>&gt;</a>
+   </li>
+   <li class="page-item" onclick="pageClick(${totalResults})">
+        <a class="page-link" href='#js-bottom'>&gt;&gt;</a>
+   </li>`;
 
     document.querySelector(".pagination").innerHTML = paginationHTML
 }
